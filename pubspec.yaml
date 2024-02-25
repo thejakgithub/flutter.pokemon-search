@@ -22,8 +22,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dio: ^5.4.0
-  provider: ^6.1.1
   flutter_native_splash: ^2.3.10
+  riverpod_lint: ^2.3.9
+  provider: ^6.1.1
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -51,10 +53,15 @@ flutter:
     - assets/images/
 
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/images/bg-splashscreen.jpg
+  background_image: assets/images/logo-pokemon.png
 
   android_12:
-    image: assets/images/bg-splashscreen.jpg
+    background_image: assets/images/logo-pokemon.png
 
   web: false
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon-pokemon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21

@@ -8,8 +8,13 @@ class Service {
   Service._internal();
 
   Future<PokemonInfo> getPokemonInfo(String name) async {
-    var response = await Api().dio.get<String>('/pokemon/$name');
-
-    return pokemonInfoFromJson(response.data ?? "");
+    try {
+      var response = await Api().dio.get<String>('/pokemon/$name');
+      print("fuk : ${response.data}");
+      return pokemonInfoFromJson(response.data ?? "");
+    } catch (e) {
+      print("eiei $e");
+      return PokemonInfo();
+    }
   }
 }
