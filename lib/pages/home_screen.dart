@@ -103,8 +103,6 @@ class _HomeScreenState extends State<HomeScreen> {
         num = 3;
       } else if (filterList.length == 1) {
         num = 4;
-      } else if (filterList.isEmpty) {
-        num = 5;
       }
       return 40 + 57.00 * num;
     }
@@ -330,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  if (!isSelected && isValue)
+                  if (!isSelected && isValue && filterList.isNotEmpty)
                     Positioned(
                       left: 0,
                       right: 0,
