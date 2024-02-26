@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:pokemon_search/main.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pokemon_search/extension/extension.dart';
 import 'package:pokemon_search/models/pokemonAll.dart';
 import 'package:pokemon_search/models/pokemonInfo.dart';
 import 'package:pokemon_search/provider/pokemon_provider.dart';
@@ -91,21 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
     filterPokemonList(name);
   }
 
-  double get calHeightFilterSearch {
+  double? get calHeightFilterSearch {
     if (filterList.length > 5) {
-      return 40;
+      return 58.00 * 5;
     } else {
-      double num = 0;
-      if (filterList.length == 4) {
-        num = 1;
-      } else if (filterList.length == 3) {
-        num = 2;
-      } else if (filterList.length == 2) {
-        num = 3;
-      } else if (filterList.length == 1) {
-        num = 4;
-      }
-      return 40 + 57.00 * num;
+      return null;
     }
   }
 
@@ -236,7 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
               ],
             ),
-          )
+          ),
+          const SizedBox(
+            height: 20,
+          ),
         ],
       );
     }
@@ -245,115 +237,137 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          color: const Color(0xfff4f4f4),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 30,
-            ),
-            child: SafeArea(
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        Image.asset(
-                          "assets/images/logo-pokemon.png",
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        TextField(
-                          controller: searchCtrl,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                            ),
-                            prefixIcon: const Icon(Icons.search),
-                            suffixIcon: isValue
-                                ? IconButton(
-                                    onPressed: () {
-                                      clearInputSearch();
-                                    },
-                                    icon: const Icon(Icons.clear),
-                                  )
-                                : null,
-                            labelText: 'กรอกชื่อ Pokemon',
-                          ),
-                          onChanged: (value) {
-                            searchPokemon(value);
-                          },
-                          onSubmitted: (value) => getPokemonInfo(value),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amberAccent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            onPressed: () => getPokemonInfo(searchCtrl.text),
-                            child: const Text(
-                              "ค้นหา",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        if (isLoading)
-                          const Center(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 150),
-                              child: CircularProgressIndicator(
-                                color: Colors.blueAccent,
-                              ),
-                            ),
-                          ),
-                        if (isSearch && !isLoading) _resultSearch()
-                      ],
-                    ),
-                  ),
-                  if (!isSelected && isValue && filterList.isNotEmpty)
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 250,
-                      bottom: calHeightFilterSearch,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: ListView(
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        setState(() {
+          isSelected = true;
+        });
+      },
+      child: ScreenUtilInit(
+        designSize: const Size(430, 932),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        child: Scaffold(
+          backgroundColor: const Color(0xfff4f4f4),
+          body: Center(
+            child: Container(
+              height: double.infinity,
+              width: 430,
+              color: const Color(0xfff4f4f4),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                ),
+                child: SafeArea(
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            for (var data in filterList)
-                              ListTile(
-                                title: Text(data.name.capitalize()),
-                                onTap: () => getPokemonInfo(data.name),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Image.asset(
+                              "assets/images/logo-pokemon.png",
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            TextField(
+                              controller: searchCtrl,
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                ),
+                                prefixIcon: const Icon(Icons.search),
+                                suffixIcon: isValue
+                                    ? IconButton(
+                                        onPressed: () {
+                                          clearInputSearch();
+                                        },
+                                        icon: const Icon(Icons.clear),
+                                      )
+                                    : null,
+                                labelText: 'กรอกชื่อ Pokemon',
                               ),
+                              onChanged: (value) {
+                                searchPokemon(value);
+                              },
+                              onTap: () {
+                                setState(() {
+                                  isSelected = false;
+                                });
+                              },
+                              onSubmitted: (value) => getPokemonInfo(value),
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.amberAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: () =>
+                                    getPokemonInfo(searchCtrl.text),
+                                child: const Text(
+                                  "ค้นหา",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            if (isLoading)
+                              const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 150),
+                                  child: CircularProgressIndicator(
+                                    color: Colors.blueAccent,
+                                  ),
+                                ),
+                              ),
+                            if (isSearch && !isLoading) _resultSearch()
                           ],
                         ),
                       ),
-                    ),
-                ],
+                      if (!isSelected && isValue && filterList.isNotEmpty)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 250,
+                          child: Container(
+                            height: calHeightFilterSearch,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListView(
+                              shrinkWrap: true,
+                              physics: const BouncingScrollPhysics(),
+                              children: [
+                                for (var data in filterList)
+                                  ListTile(
+                                    title: Text(
+                                      data.name.capitalize(),
+                                    ),
+                                    onTap: () => getPokemonInfo(data.name),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

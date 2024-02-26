@@ -26,6 +26,7 @@ dependencies:
   riverpod_lint: ^2.3.9
   provider: ^6.1.1
   flutter_launcher_icons: ^0.13.1
+  flutter_screenutil: ^5.9.0
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +59,7 @@ flutter_native_splash:
   android_12:
     background_image: assets/images/logo-pokemon.png
 
-  web: false
+  web: true
 
 flutter_launcher_icons:
   android: "launcher_icon"
