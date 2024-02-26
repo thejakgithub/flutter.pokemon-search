@@ -70,8 +70,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void filterPokemonList(String name) {
     setState(() {
-      filterList =
-          pokemonList.where((element) => element.name.contains(name)).toList();
+      filterList = pokemonList
+          .where((element) => element.name.startsWith(name))
+          .toList();
     });
   }
 
