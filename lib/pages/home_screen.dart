@@ -1,6 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pokemon_search/colors/colors.dart';
 import 'package:pokemon_search/extension/extension.dart';
 import 'package:pokemon_search/models/pokemonAll.dart';
 import 'package:pokemon_search/models/pokemonInfo.dart';
@@ -8,38 +11,20 @@ import 'package:pokemon_search/provider/pokemon_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Map<String, String> colors = {
-    "normal": '#A8A77A',
-    "fire": '#EE8130',
-    "water": '#6390F0',
-    "electric": '#F7D02C',
-    "grass": '#7AC74C',
-    "ice": '#96D9D6',
-    "fighting": '#C22E28',
-    "poison": '#A33EA1',
-    "ground": '#E2BF65',
-    "flying": '#A98FF3',
-    "psychic": '#F95587',
-    "bug": '#A6B91A',
-    "rock": '#B6A136',
-    "ghost": '#735797',
-    "dragon": '#6F35FC',
-    "dark": '#705746',
-    "steel": '#B7B7CE',
-    "fairy": '#D685AD',
-  };
-
   bool isSearch = false;
   bool isValue = false;
   bool isLoading = false;
   bool isSelected = false;
+  bool isConnection = false;
   List<Result> pokemonList = [];
   List<Result> filterList = [];
   late PokemonInfo pokemonInfo = PokemonInfo();
@@ -51,8 +36,35 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       FlutterNativeSplash.remove();
     });
+    checkConnection();
     getPokemonAll();
+
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      checkConnection();
+      getPokemonAll();
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> checkConnection() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+
+    if (connectivityResult == ConnectivityResult.none) {
+      setState(() {
+        isConnection = false;
+      });
+    } else {
+      setState(() {
+        isConnection = true;
+      });
+    }
   }
 
   Future<void> getPokemonAll() async {
@@ -158,11 +170,19 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(
             height: 50,
           ),
-          Center(
-            child: Image.network(
-              height: 250,
-              pokemonInfo.sprites!.other!.officialArtwork!.frontDefault!,
-              fit: BoxFit.cover,
+          Hero(
+            tag: pokemonInfo.id!,
+            child: GestureDetector(
+              onTap: () {
+                context.pushNamed("pokemon_detail", extra: pokemonInfo);
+              },
+              child: Center(
+                child: Image.network(
+                  height: 250,
+                  pokemonInfo.sprites!.other!.officialArtwork!.frontDefault!,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
           const SizedBox(
@@ -198,6 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 50),
             child: Wrap(
               spacing: 10,
+              runSpacing: 10,
               children: [
                 for (var data in pokemonInfo.types!)
                   Container(
@@ -326,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            if (isLoading)
+                            if (isLoading && isConnection)
                               const Center(
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 150),
@@ -335,11 +356,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                               ),
-                            if (isSearch && !isLoading) _resultSearch()
+                            if (isSearch && !isLoading && isConnection)
+                              _resultSearch()
+                            else if (!isConnection)
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const SizedBox(
+                                    height: 100,
+                                  ),
+                                  const Icon(
+                                    Icons.wifi_off,
+                                    size: 100,
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  const Text(
+                                    "ไม่มีการเชื่อมต่ออินเทอร์เน็ต",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
+                              ),
                           ],
                         ),
                       ),
-                      if (!isSelected && isValue && filterList.isNotEmpty)
+                      if (!isSelected &&
+                          isValue &&
+                          filterList.isNotEmpty &&
+                          isConnection)
                         Positioned(
                           left: 0,
                           right: 0,
