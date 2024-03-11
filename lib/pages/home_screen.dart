@@ -9,6 +9,7 @@ import 'package:pokemon_search/models/pokemonAll.dart';
 import 'package:pokemon_search/models/pokemonInfo.dart';
 import 'package:pokemon_search/provider/pokemon_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isValue = false;
   bool isLoading = false;
   bool isSelected = false;
-  bool isConnection = false;
+  bool isConnection = true;
   List<Result> pokemonList = [];
   List<Result> filterList = [];
   late PokemonInfo pokemonInfo = PokemonInfo();
@@ -36,13 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       FlutterNativeSplash.remove();
     });
-    checkConnection();
-    getPokemonAll();
 
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    if (kIsWeb) {
+      getPokemonAll();
+    } else {
       checkConnection();
       getPokemonAll();
-    });
+
+      Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+        checkConnection();
+        getPokemonAll();
+      });
+    }
 
     super.initState();
   }

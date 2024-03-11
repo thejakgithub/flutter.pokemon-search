@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pokemon_search/colors/colors.dart';
 import 'package:pokemon_search/extension/extension.dart';
 import 'package:pokemon_search/models/pokemonInfo.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // ignore: must_be_immutable
 class PokemonDetailScreen extends StatefulWidget {
@@ -35,39 +35,47 @@ class _PokemonDetailScreenState extends State<PokemonDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff4f4f4),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.pop(context);
+      backgroundColor: const Color(0xfff4f4f4),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 0),
+          child: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                Navigator.pop(context);
 
-            FocusScope.of(context).unfocus();
-          },
-        ),
-        backgroundColor: Colors.transparent,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              widget.pokemonInfo.name!.capitalize(),
-              style: const TextStyle(fontWeight: FontWeight.w700),
+                FocusScope.of(context).unfocus();
+              },
             ),
-            const SizedBox(
-              width: 10,
+            backgroundColor: Colors.transparent,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.pokemonInfo.name!.capitalize(),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  getNumberPokemon(widget.pokemonInfo.id!),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff616161),
+                  ),
+                ),
+              ],
             ),
-            Text(
-              getNumberPokemon(widget.pokemonInfo.id!),
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                color: Color(0xff616161),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: EdgeInsets.symmetric(
+            horizontal: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 30),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

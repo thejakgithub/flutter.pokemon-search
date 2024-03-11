@@ -28,9 +28,6 @@ final GoRouter router = GoRouter(
               pokemonInfo: state.extra as PokemonInfo,
             ));
       },
-      // builder: (context, state) => PokemonDetailScreen(
-      //   pokemonInfo: state.extra as PokemonInfo,
-      // ),
     ),
   ],
 );
